@@ -1,25 +1,107 @@
-import { NextRequest, NextResponse } from "next/server";
-import { DASHBOARDSTARTPATH } from "./lib/config";
+import { NextRequest, NextResponse } from 'next/server';
+import { NextSessionService } from './features/auth/infrastructure/services/NextSessionService';
 
-export function middleware(request: NextRequest) {
-  const token = request.cookies.get("access_token")?.value;
+const protectedRoutes = [
+  '/dashboard',
+  '/profile',
+  '/settings',
+];
 
-  const isProtected = request.nextUrl.pathname.startsWith(DASHBOARDSTARTPATH);
+const publicRoutes = [
+  '/auth/login',
+  '/auth/register',
+  '/auth/forgot-password',
+  '/',
+];
 
-  if (isProtected && !token) {
-    return NextResponse.redirect(new URL("/", request.url));
+const publicApiRoutes = [
+  '/api/auth/login',
+  '/api/auth/register',
+];
+
+export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  if (
+    pathname.startsWith('/_next/') ||
+    pathname.startsWith('/static/') ||
+    pathname.includes('.')
+  ) {
+    return NextResponse.next();
   }
 
-  /**
-   * Test if user has already authenticated and are on welcome or login page
-   */
-  if ( request.nextUrl.pathname == `/` ||  request.nextUrl.pathname == `/login`  && token) {
-    return NextResponse.redirect(new URL(DASHBOARDSTARTPATH, request.url));
+  const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
+  const isPublicRoute = publicRoutes.some(route => pathname === route);
+  const isPublicApiRoute = publicApiRoutes.some(route => pathname.startsWith(route));
+
+  // Allow public API routes
+  if (isPublicApiRoute) {
+    return NextResponse.next();
   }
 
-  return NextResponse.next();
+  try {
+    // Get session
+    const session = await NextSessionService.getSession();
+    const isAuthenticated = session && await NextSessionService.isSessionValid();
+
+    // Protected route without valid session
+    if (isProtectedRoute && !isAuthenticated) {
+      const loginUrl = new URL('/auth/login', request.url);
+      loginUrl.searchParams.set('from', pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+
+    // Public route with valid session (redirect to dashboard)
+    if (isPublicRoute && isAuthenticated && pathname.startsWith('/auth/')) {
+      return NextResponse.redirect(new URL('/dashboard', request.url));
+    }
+
+    // API routes (non-auth) need session validation
+    if (pathname.startsWith('/api/') && !pathname.startsWith('/api/auth/')) {
+      if (!isAuthenticated) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: {
+              code: 'UNAUTHORIZED',
+              message: 'Authentication required',
+            }
+          },
+          { status: 401 }
+        );
+      }
+
+      // Add user info to headers for API routes
+      const response = NextResponse.next();
+      response.headers.set('x-user-id', session!.userId);
+      response.headers.set('x-session-id', session!.sessionId);
+      return response;
+    }
+
+    return NextResponse.next();
+
+  } catch (error) {
+    console.error('Middleware error:', error);
+    
+    // On error, clear session and redirect to login if needed
+    if (isProtectedRoute) {
+      NextSessionService.clearSession();
+      return NextResponse.redirect(new URL('/auth/login', request.url));
+    }
+
+    return NextResponse.next();
+  }
 }
 
 export const config = {
-  matcher: [`${DASHBOARDSTARTPATH}/:path*`,"/","/login/"],
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public (public files)
+     */
+    '/((?!_next/static|_next/image|favicon.ico|public).*)',
+  ],
 };

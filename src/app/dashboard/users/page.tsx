@@ -1,4 +1,4 @@
-import { SearchParams } from "@/features/app/fetch_functions";
+import { SearchParams } from "@/features/fetch_functions";
 import { findPaginatedUsers } from "@/features/user/user.service";
 import React from "react";
 import HeaderTitle from "../_components/header-title";
