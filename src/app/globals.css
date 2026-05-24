@@ -195,3 +195,20 @@ th {
 .resizer.isResizing {
   background: hsl(var(--primary) / 0.4);
 }
+
+@keyframes progress-bar {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(-20%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-progress-bar {
+  animation: progress-bar 1.2s ease-in-out infinite;
+  width: 60%;
+}

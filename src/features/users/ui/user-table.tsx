@@ -107,6 +107,8 @@ export function UserTable({ users, total, stats, filters }: UserTableProps) {
       searchValue={searchValue}
       onSearchChange={setSearchValue}
       isSearchPending={isPending}
+      isFiltering={isPending}
+      totalUnfilteredCount={stats.total}
       filterableColumns={filterableColumns}
       activeFilters={activeFilters}
       onFilterChange={onFilterChange}

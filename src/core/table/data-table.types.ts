@@ -73,6 +73,8 @@ export interface DataTableShellProps<TData, TValue> {
   pagination?: DataTablePaginationConfig;
   hasActiveFilters?: boolean;
   isSearchPending?: boolean;
+  isFiltering?: boolean;
+  totalUnfilteredCount?: number;
   cardComponent?: ComponentType<{ row: TData }>;
 }
 

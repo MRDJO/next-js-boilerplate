@@ -26,6 +26,12 @@ export function useUserTableUrl(defaultSearch: string, filters: ParsedUserFilter
   const [isPending, startTransition] = useTransition();
   const [searchValue, setSearchValue] = useState(defaultSearch);
 
+  useEffect(() => {
+    // Synchronise la recherche locale apres navigation URL (retour navigateur, effacer filtres).
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- sync intentionnel depuis les search params serveur
+    setSearchValue(defaultSearch);
+  }, [defaultSearch]);
+
   const replaceParams = useCallback(
     (updates: Record<string, string | null>) => {
       const params = new URLSearchParams(searchParams.toString());

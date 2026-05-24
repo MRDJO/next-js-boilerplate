@@ -18,7 +18,6 @@ const UserPage = async ({ searchParams }: { searchParams: SearchParams }) => {
         description="Feature pilote du nouveau socle CRUD avec repository injectable."
       />
       <UserTable
-        key={`${filters.search}-${filters.status ?? ""}-${filters.role ?? ""}-${filters.department ?? ""}-${filters.city ?? ""}-${filters.page}-${filters.perPage}`}
         users={users.items}
         total={users.total}
         stats={stats}

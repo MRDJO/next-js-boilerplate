@@ -1,5 +1,6 @@
 import { getAppContainer } from "@/core/di/container";
 import { TOKENS } from "@/core/di/tokens";
+import { withSimulatedDelay } from "@/lib/simulate-delay";
 import type { CrudListParams } from "@/core/repositories/crud.types";
 import type { UserFilters } from "../model/user.types";
 import type { IUserRepository } from "../repository/user.repository.interface";
@@ -10,10 +11,10 @@ const getUserRepository = () => {
 
 export const userService = {
   list(filters?: CrudListParams<UserFilters>) {
-    return getUserRepository().list(filters);
+    return withSimulatedDelay(() => getUserRepository().list(filters));
   },
   getStats() {
-    return getUserRepository().getStats();
+    return withSimulatedDelay(() => getUserRepository().getStats());
   },
   getById(id: string | number) {
     return getUserRepository().getById(id);

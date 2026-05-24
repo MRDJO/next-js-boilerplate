@@ -8,6 +8,7 @@ interface DataTableStatCardsProps {
   cards: StatCard[];
   activeCardId?: string | null;
   onCardClick?: (card: StatCard) => void;
+  isFiltering?: boolean;
 }
 
 const accentDotClass: Record<NonNullable<StatCard["accent"]>, string> = {
@@ -20,6 +21,7 @@ export function DataTableStatCards({
   cards,
   activeCardId,
   onCardClick,
+  isFiltering = false,
 }: DataTableStatCardsProps) {
   return (
     <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
@@ -40,8 +42,11 @@ export function DataTableStatCards({
               }
             }}
             className={cn(
-              "flex cursor-pointer flex-col gap-1 p-4 transition-shadow hover:shadow-sm",
-              isActive && "ring-2 ring-primary",
+              "flex cursor-pointer flex-col gap-1 p-4 transition-all duration-150 select-none",
+              isActive
+                ? "bg-primary/5 shadow-sm ring-2 ring-primary"
+                : "hover:bg-muted/40 hover:shadow-sm",
+              isFiltering && isActive && "opacity-80",
             )}
           >
             <div className="flex items-center justify-between">

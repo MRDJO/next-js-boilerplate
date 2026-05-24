@@ -13,6 +13,8 @@ import { DataTableBulkBar } from "./data-table-bulk-bar";
 import { DataTableEmptyState } from "./data-table-empty-state";
 import { exportTableToCsv } from "./data-table-export";
 import { DataTableFilterPills } from "./data-table-filter-pills";
+import { DataTableFilteringOverlay } from "./data-table-filtering-overlay";
+import { DataTableResultsCount } from "./data-table-results-count";
 import { getCommonPinningStyles } from "./data-table-pinning";
 import { createSelectColumn } from "./data-table-select-column";
 import { DataTableStatCards } from "./data-table-stat-cards";
@@ -59,6 +61,8 @@ export function DataTableShell<TData, TValue>({
   pagination,
   hasActiveFilters = false,
   isSearchPending,
+  isFiltering = false,
+  totalUnfilteredCount,
   cardComponent: CardComponent,
 }: DataTableShellProps<TData, TValue>) {
   const isMobile = useIsMobile();
@@ -168,10 +172,8 @@ export function DataTableShell<TData, TValue>({
     table.resetRowSelection();
   };
 
-  const statusLine =
-    selectedCount > 0
-      ? `${selectedCount} selectionne${selectedCount > 1 ? "s" : ""} sur ${displayTotal}`
-      : `${displayTotal} ${entityLabel}${displayTotal > 1 ? "s" : ""}`;
+  const totalCount = totalUnfilteredCount ?? displayTotal;
+  const isFiltered = hasActiveFilters;
 
   return (
     <div className={cn("flex min-w-0 flex-col gap-4", className)}>
@@ -180,6 +182,7 @@ export function DataTableShell<TData, TValue>({
           cards={statCards}
           activeCardId={activeStatCardId}
           onCardClick={onStatCardClick}
+          isFiltering={isFiltering}
         />
       )}
 
@@ -200,7 +203,14 @@ export function DataTableShell<TData, TValue>({
         hasCardComponent={Boolean(CardComponent)}
       />
 
-      <p className="text-xs text-muted-foreground">{statusLine}</p>
+      <DataTableResultsCount
+        filteredCount={displayTotal}
+        totalCount={totalCount}
+        entityLabel={entityLabel}
+        isFiltered={isFiltered}
+        isFiltering={isFiltering}
+        selectedCount={selectedCount}
+      />
 
       <DataTableFilterPills
         filters={activeFilters}
@@ -208,42 +218,43 @@ export function DataTableShell<TData, TValue>({
         onClearAll={() => onClearFilters?.()}
       />
 
-      {showCardView && CardComponent && (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {!isEmpty ? (
-            rows.map((row) => (
-              <button
-                key={row.id}
-                type="button"
-                className="text-left"
-                onClick={() => onRowClick?.(row.original)}
-              >
-                <CardComponent row={row.original} />
-              </button>
-            ))
-          ) : (
-            <div className="col-span-full rounded-xl border bg-card shadow-sm">
-              <DataTableEmptyState
-                variant={hasActiveFilters ? "filtered" : "default"}
-                title={
-                  hasActiveFilters
-                    ? "Aucun resultat pour ces filtres"
-                    : emptyMessage
-                }
-                onClearFilters={hasActiveFilters ? onClearFilters : undefined}
-              />
-            </div>
-          )}
-        </div>
-      )}
+      <DataTableFilteringOverlay isFiltering={isFiltering}>
+        {showCardView && CardComponent && (
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {!isEmpty ? (
+              rows.map((row) => (
+                <button
+                  key={row.id}
+                  type="button"
+                  className="text-left"
+                  onClick={() => onRowClick?.(row.original)}
+                >
+                  <CardComponent row={row.original} />
+                </button>
+              ))
+            ) : (
+              <div className="col-span-full rounded-xl border bg-card shadow-sm">
+                <DataTableEmptyState
+                  variant={hasActiveFilters ? "filtered" : "default"}
+                  title={
+                    hasActiveFilters
+                      ? "Aucun resultat pour ces filtres"
+                      : emptyMessage
+                  }
+                  onClearFilters={hasActiveFilters ? onClearFilters : undefined}
+                />
+              </div>
+            )}
+          </div>
+        )}
 
-      {showTableView && (
-        <div className="w-full min-w-0 max-w-full overflow-hidden rounded-xl border bg-card shadow-sm">
-          <div
-            className="table-container -mx-4 overflow-x-auto px-4 md:mx-0 md:px-0"
-            style={{ maxHeight: bodyMaxHeight }}
-          >
-            <table
+        {showTableView && (
+          <div className="w-full min-w-0 max-w-full overflow-hidden rounded-xl border bg-card shadow-sm">
+            <div
+              className="table-container -mx-4 overflow-x-auto px-4 md:mx-0 md:px-0"
+              style={{ maxHeight: bodyMaxHeight }}
+            >
+              <table
               className="text-sm"
               style={{
                 ...columnSizeVars,
@@ -323,10 +334,11 @@ export function DataTableShell<TData, TValue>({
                   </tr>
                 )}
               </tbody>
-            </table>
+              </table>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </DataTableFilteringOverlay>
 
       {pagination && selectedCount === 0 && (
         <PaginationControls
