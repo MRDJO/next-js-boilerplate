@@ -11,6 +11,7 @@ import type {
   User,
   UserDto,
   UserFilters,
+  UserStatsSummary,
 } from "../model/user.types";
 import type { IUserRepository } from "./user.repository.interface";
 
@@ -39,6 +40,22 @@ export class UserRepository
           params.set("search", filters.search);
         }
 
+        if (filters?.status) {
+          params.set("status", filters.status);
+        }
+
+        if (filters?.role) {
+          params.set("role", filters.role);
+        }
+
+        if (filters?.department) {
+          params.set("department", filters.department);
+        }
+
+        if (filters?.city) {
+          params.set("city", filters.city);
+        }
+
         return `?${params.toString()}`;
       },
       extractList: (response, filters) =>
@@ -47,5 +64,10 @@ export class UserRepository
           perPage: filters?.perPage,
         }),
     });
+  }
+
+  async getStats(): Promise<UserStatsSummary> {
+    const response = await this.client.get<UserStatsSummary>(`${USERS_ENDPOINT}/stats`);
+    return response;
   }
 }

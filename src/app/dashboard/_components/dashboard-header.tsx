@@ -1,6 +1,7 @@
 "use client";
 
 import { DashboardHeaderActions } from "@/app/dashboard/_components/dashboard-header-actions";
+import { MobileSheetNav } from "@/components/layout/mobile-sheet-nav";
 import { SidebarToggle } from "@/components/layout/sidebar-toggle";
 import {
   Breadcrumb,
@@ -21,8 +22,12 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
   return (
     <header className="flex h-16 shrink-0 items-center justify-between gap-2 px-4">
       <div className="flex min-w-0 items-center gap-2">
+        <MobileSheetNav user={user} />
         <SidebarToggle />
-        <Separator orientation="vertical" className="mr-1 data-[orientation=vertical]:h-4" />
+        <Separator
+          orientation="vertical"
+          className="mr-1 hidden data-[orientation=vertical]:h-4 md:block"
+        />
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem className="hidden md:block">

@@ -12,6 +12,7 @@ interface SidebarNavItemProps {
   isActive?: boolean;
   disabled?: boolean;
   collapsed?: boolean;
+  onNavigate?: () => void;
 }
 
 function SidebarNavItemButton({
@@ -21,6 +22,7 @@ function SidebarNavItemButton({
   isActive = false,
   disabled = false,
   collapsed = false,
+  onNavigate,
 }: SidebarNavItemProps) {
   const itemClassName = cn(
     "group flex h-10 items-center rounded-lg px-3 text-sm transition-colors",
@@ -38,7 +40,9 @@ function SidebarNavItemButton({
       onClick={(event) => {
         if (disabled) {
           event.preventDefault();
+          return;
         }
+        onNavigate?.();
       }}
       className={itemClassName}
     >

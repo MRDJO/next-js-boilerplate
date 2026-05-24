@@ -12,6 +12,9 @@ export const userService = {
   list(filters?: CrudListParams<UserFilters>) {
     return getUserRepository().list(filters);
   },
+  getStats() {
+    return getUserRepository().getStats();
+  },
   getById(id: string | number) {
     return getUserRepository().getById(id);
   },

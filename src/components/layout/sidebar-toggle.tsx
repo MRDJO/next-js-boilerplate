@@ -11,7 +11,7 @@ export function SidebarToggle() {
     <Button
       variant="ghost"
       size="icon"
-      className="size-8 shrink-0 border border-border/70"
+      className="hidden size-8 shrink-0 border border-border/70 md:inline-flex"
       onClick={toggle}
       title="Ouvrir ou fermer la sidebar (⌘S ou Ctrl+S)"
       aria-label={collapsed ? "Etendre la sidebar" : "Reduire la sidebar"}

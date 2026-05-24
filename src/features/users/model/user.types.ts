@@ -57,4 +57,15 @@ export type UpdateUserInput = Partial<CreateUserInput>;
 
 export interface UserFilters {
   search?: string;
+  status?: UserStatus;
+  role?: string;
+  department?: string;
+  city?: string;
+}
+
+export interface UserStatsSummary {
+  total: number;
+  active: number;
+  pending: number;
+  inactive: number;
 }
