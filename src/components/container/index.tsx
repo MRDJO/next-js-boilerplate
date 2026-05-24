@@ -11,7 +11,7 @@ interface Props{
 const Container = ({children, className, id, style}: Props) => {
   return (
     <div>
-      <div className={clsx(className, "w-full max-w-8xl mx-auto px-5")}
+      <div className={clsx(className, "mx-auto w-full min-w-0 max-w-8xl px-5")}
         style={style}  id={id}  >
         {children}
       </div>

@@ -1,74 +1,74 @@
-"use client"
+"use client";
 
-import * as React from "react"
-
-import { NavMain } from "@/components/nav-main"
-import { NavProjects } from "@/components/nav-projects"
-import { NavUser } from "@/components/nav-user"
+import * as React from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { NavMain } from "@/components/nav-main";
+import { NavUser } from "@/components/nav-user";
+import { dashboardNav } from "@/core/config/navigation";
+import type { AuthUser } from "@/core/auth";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
   useSidebar,
-} from "@/components/ui/sidebar"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { data } from "@/features/app.data"
-import Image from "next/image"
+} from "@/components/ui/sidebar";
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const {open} = useSidebar()
-  const pathname = usePathname()
+interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
+  user: AuthUser;
+}
+
+export function AppSidebar({ user, ...props }: AppSidebarProps) {
+  const { open } = useSidebar();
+  const pathname = usePathname();
+  const { brand, overview, items } = dashboardNav;
+  const OverviewIcon = overview.icon;
+
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader className="py-6 flex flex-col justify-center items-center text-center"  >
-      {open ? (
-            <Link href="/" className="flex items-center text-2xl  font-medium">
-              <Image src="/38888.jpg"  height={100} width={100} alt="Straca" className="rounded-full" />
-            </Link>
-          ) : (
-            <>
-              <Link
-                href="/"
-                className="flex items-center text-2xl  font-medium"
-              >
-                <span className="text-primary">ST</span>
-              </Link>
-            </>
-          )}
+      <SidebarHeader className="flex flex-col items-center justify-center py-6 text-center">
+        {open ? (
+          <Link href={overview.href} className="text-2xl font-semibold tracking-tight">
+            {brand.name}
+          </Link>
+        ) : (
+          <Link href={overview.href} className="text-xl font-bold text-primary">
+            {brand.shortName}
+          </Link>
+        )}
       </SidebarHeader>
+
       <SidebarGroup>
-        <SidebarGroupLabel></SidebarGroupLabel>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
-              tooltip={data.dashboard.name}
-              isActive={pathname == data.dashboard.href}
+              tooltip={overview.title}
+              isActive={pathname === overview.href}
               asChild
             >
-              <Link href={data.dashboard.href}>
-                <data.dashboard.icon />
-                <span>{data.dashboard.name}</span>
+              <Link href={overview.href}>
+                <OverviewIcon />
+                <span>{overview.title}</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarGroup>
+
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
+        <NavMain items={items} label="Fonctionnalites" />
       </SidebarContent>
+
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={user} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }

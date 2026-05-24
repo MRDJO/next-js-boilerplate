@@ -16,9 +16,17 @@ const FormInputField: React.FC<FormInputFieldProps> = ({ control, name, label, i
       <FormItem>
         <FormLabel>{label}</FormLabel>
         <FormControl>
-          <Input {...field} {...inputProps} 
-             value={field.value || ""}
-             onChange={(e) => field.onChange(inputProps?.type === "number" ? Number(e.target.value) : e.target.value)}
+          <Input
+            {...field}
+            {...inputProps}
+            value={field.value ?? ""}
+            onChange={(event) => {
+              const value =
+                inputProps?.type === "number"
+                  ? Number(event.target.value)
+                  : event.target.value;
+              field.onChange(value);
+            }}
           />
         </FormControl>
         <FormMessage />

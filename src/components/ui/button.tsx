@@ -49,20 +49,26 @@ function Button({
     asChild?: boolean,
     loading?: boolean
   }) {
-  const Comp = asChild ? Slot : "button"
+  const Comp = asChild ? Slot : "button";
 
   return (
     <Comp
-        className={cn(buttonVariants({ variant, size, className }))}
-        ref={ref}
-        {...props}
-        disabled={disabled || loading}
-        aria-busy={loading || disabled}
-      >
-        {loading &&  <Loader className="mr-1 h-4 w-4 animate-spin" />}
-        {props.children}
-      </Comp>
-  )
+      className={cn(buttonVariants({ variant, size, className }))}
+      ref={ref}
+      {...props}
+      disabled={asChild ? undefined : disabled || loading}
+      aria-busy={loading || disabled}
+    >
+      {asChild ? (
+        props.children
+      ) : (
+        <>
+          {loading ? <Loader className="mr-1 h-4 w-4 animate-spin" /> : null}
+          {props.children}
+        </>
+      )}
+    </Comp>
+  );
 }
 
 export { Button, buttonVariants }

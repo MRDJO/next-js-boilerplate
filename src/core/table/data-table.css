@@ -1,0 +1,71 @@
+/* Copie conforme TanStack Table — full-width-resizable + column-pinning-sticky */
+/* https://tanstack.com/table/v8/docs/framework/react/examples/full-width-resizable-table */
+/* https://tanstack.com/table/v8/docs/framework/react/examples/column-pinning-sticky */
+
+.table-container {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: scroll;
+  overflow-y: auto;
+}
+
+.table-container table {
+  border-collapse: separate !important;
+  border-spacing: 0;
+}
+
+.table-container th {
+  position: relative;
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  font-weight: 600;
+  padding: 0.5rem 0.625rem;
+  text-align: left;
+}
+
+.table-container td {
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  padding: 0.5rem 0.625rem;
+  background-color: var(--card);
+}
+
+.table-container thead th {
+  background-color: color-mix(in oklab, var(--muted) 85%, transparent);
+}
+
+.table-container .resizer {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 5px;
+  background: rgba(0, 0, 0, 0.5);
+  cursor: col-resize;
+  user-select: none;
+  touch-action: none;
+}
+
+.table-container .resizer.isResizing {
+  background: blue;
+  opacity: 1;
+}
+
+@media (hover: hover) {
+  .table-container .resizer {
+    opacity: 0;
+  }
+
+  .table-container *:hover > .resizer {
+    opacity: 1;
+  }
+}
+
+.dark .table-container .resizer {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.dark .table-container .resizer.isResizing {
+  background: var(--primary);
+}
