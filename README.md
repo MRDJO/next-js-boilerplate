@@ -4,20 +4,19 @@ This is a Next.js boilerplate for building modern web applications, with a focus
 
 ## Architecture
 
-The project follows a feature-based architecture using the Next.js App Router.
+Architecture **feature-based** (App Router) : `service` → `repository`, DI Inversify, listes dashboard avec filtres URL et `DataTableShell`.
 
-*   **`src/app`**: This directory contains the application's routes, layouts, and pages, following the Next.js App Router conventions.
-*   **`src/components`**: This directory is for all React components, organized into `ui` for generic, reusable components (from shadcn/ui) and other custom components.
-*   **`src/features`**: This is where the core business logic resides. It's divided by feature (e.g., `app`, `user`), with each feature having its own actions, queries, data models, and state management.
-*   **`src/lib`**: This directory contains shared utilities and library configurations.
-*   **`src/hooks`**: This directory is for custom React hooks.
+- **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** — vue d’ensemble pour les développeurs
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** — comment ajouter une feature
+- **Référence code** : `src/features/users/`
+- **Skill Cursor (agent)** : `.cursor/skills/implement-feature/`
 
-## Data Fetching
-
-Data fetching is handled through a centralized system in the `src/features` directory.
-
-*   **Queries and Actions**: Each feature defines its own data-fetching logic in `*.repository.ts`,   `*.services.ts` and `*.actions.ts` files. This keeps the data logic co-located with the feature it belongs to.
-*   **State Management**: The project uses [Zustand](https://github.com/pmndrs/zustand) for global state management, configured on a per-feature basis (e.g., `src/features/app/app.store.ts`).
+| Dossier | Rôle |
+|---------|------|
+| `src/app` | Routes, layouts, pages |
+| `src/features` | Logique métier par domaine |
+| `src/core` | Auth, HTTP, table, repositories, DI |
+| `src/components` | UI shadcn, layout, formulaires |
 
 ## Components
 
